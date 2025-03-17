@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BlockEstate Prototype</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script> <!-- Include Web3.js -->
+</head>
+<body>
+  <!-- Header Section -->
+  <header>
+    <h1>BlockEstate: Student Real Estate Marketplace</h1>
+    <button id="loginBtn">Student Login</button>
+    <button id="connectButton">Connect MetaMask</button>
+  </header>
+
+  <!-- Student Login Section -->
+  <div id="studentLogin" class="hidden">
+    <h2>Student Login</h2>
+    <form id="loginForm">
+      <label for="studentID">
+        <input type="text" id="studentID" placeholder="Enter Student ID" name="studentID" required>
+      </label>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <!-- Property Listing Section -->
+  <div id="propertyList" class="hidden">
+    <h2>Available Properties</h2>
+    <div class="property-card">
+      <h3>Apartment Near Campus</h3>
+      <p>Price: $500/month</p>
+      <p>Discount: 20% for Students</p>
+      <button class="smartContractBtn" onclick="executeSmartContract('apartmentNearCampus')">Sign Smart Contract</button>
+    </div>
+    <div class="property-card">
+      <h3>Studio in Downtown</h3>
+      <p>Price: $800/month</p>
+      <p>Discount: 15% for Students</p>
+      <button class="smartContractBtn" onclick="executeSmartContract('studioInDowntown')">Sign Smart Contract</button>
+    </div>
+  </div>
+
+  <!-- Confirmation Section for Smart Contract -->
+  <div id="confirmation" class="hidden">
+    <h2>Smart Contract Signed!</h2>
+    <p>You have successfully signed the contract for the selected property.</p>
+  </div>
+
+  <!-- Property Registration Section -->
+  <div id="propertyRegistration" class="hidden">
+    <h2>Register Your Property</h2>
+    <form id="registerForm">
+      <label for="price">
+        <input type="number" id="price" placeholder="Price in ETH" required />
+      </label>
+      <label for="location">
+        <input type="text" id="location" placeholder="Property Location" required />
+      </label>
+      <button type="submit">Register Property</button>
+    </form>
+  </div>
+
+  <!-- Include External JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>
