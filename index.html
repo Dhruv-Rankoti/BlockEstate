@@ -12,7 +12,7 @@
   <!-- Navigation Bar -->
   <nav class="navbar">
     <div class="logo">
-      <img src="/api/placeholder/40/40" alt="BlockEstate Logo" />
+      <img src="./img/img1.jpg" id="logo-img" alt="BlockEstate Logo" />
       <h1>BlockEstate</h1>
     </div>
     <div class="nav-buttons">
@@ -32,7 +32,7 @@
       </div>
     </div>
     <div class="hero-image">
-      <img src="/api/placeholder/500/400" alt="Real Estate Illustration" />
+      <img  class="real-estate-img" src="https://img.freepik.com/free-vector/real-estate-abstract-concept-vector-illustration-real-estate-agency-residential-industrial-commercial-property-market-investment-portfolio-home-ownership-property-value-abstract-metaphor_335657-1967.jpg" alt="Real Estate Illustration" />
     </div>
   </section>
 
@@ -81,46 +81,12 @@
   <div id="propertyList" class="properties-container hidden">
     <h2>Available Properties</h2>
     <div class="properties-grid">
-      <div class="property-card">
-        <div class="property-image">
-          <img src="/api/placeholder/320/200" alt="Apartment Near Campus" />
-          <span class="property-badge">Verified</span>
-        </div>
-        <div class="property-details">
-          <h3>Apartment Near Campus</h3>
-          <p class="property-location">0.5 miles from University</p>
-          <div class="property-features">
-            <span>2 Bedrooms</span>
-            <span>1 Bath</span>
-            <span>Furnished</span>
-          </div>
-          <div class="property-price">
-            <p><strong>$500</strong>/month</p>
-            <p class="discount">20% Student Discount</p>
-          </div>
-          <button class="btn primary-btn smartContractBtn" onclick="executeSmartContract('apartmentNearCampus')">Sign Smart Contract</button>
-        </div>
+      <!-- Property cards will be loaded dynamically -->
+      <div id="loadingProperties" class="loading-message">
+        <p>Loading properties from blockchain...</p>
       </div>
-      
-      <div class="property-card">
-        <div class="property-image">
-          <img src="/api/placeholder/320/200" alt="Studio in Downtown" />
-          <span class="property-badge">Verified</span>
-        </div>
-        <div class="property-details">
-          <h3>Studio in Downtown</h3>
-          <p class="property-location">1.2 miles from University</p>
-          <div class="property-features">
-            <span>Studio</span>
-            <span>1 Bath</span>
-            <span>Utilities Included</span>
-          </div>
-          <div class="property-price">
-            <p><strong>$800</strong>/month</p>
-            <p class="discount">15% Student Discount</p>
-          </div>
-          <button class="btn primary-btn smartContractBtn" onclick="executeSmartContract('studioInDowntown')">Sign Smart Contract</button>
-        </div>
+      <div id="noPropertiesMessage" class="no-content-message hidden">
+        <p>No properties available. Register a new property!</p>
       </div>
     </div>
   </div>
@@ -145,6 +111,11 @@
       <span class="close-button">&times;</span>
       <h2>Register Your Property</h2>
       <form id="registerForm">
+        <!-- In the studentLogin modal in index.html -->
+        <div class="form-group">
+          <label for="studentName">Full Name</label>
+          <input type="text" id="studentName" placeholder="Enter Your Name" name="studentName" required>
+        </div>
         <div class="form-group">
           <label for="propertyTitle">Property Title</label>
           <input type="text" id="propertyTitle" placeholder="e.g., Cozy Studio Apartment" required />
@@ -154,8 +125,8 @@
           <input type="text" id="location" placeholder="Property Location" required />
         </div>
         <div class="form-group">
-          <label for="price">Price (ETH)</label>
-          <input type="number" id="price" placeholder="Price in ETH" step="0.01" required />
+          <label for="price">Price (EDU)</label>
+          <input type="number" id="price" placeholder="Price in EDU" step="0.01" required />
         </div>
         <div class="form-group">
           <label for="studentDiscount">Student Discount (%)</label>
@@ -167,6 +138,19 @@
         </div>
         <button type="submit" class="btn primary-btn">Register Property</button>
       </form>
+    </div>
+  </div>
+
+  <!-- Network Error Modal -->
+  <div id="networkError" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <div class="error-content">
+        <div class="error-icon">⚠️</div>
+        <h2>Network Error</h2>
+        <p>Please make sure you're connected to the correct blockchain network.</p>
+        <button class="btn primary-btn" id="closeErrorBtn">Close</button>
+      </div>
     </div>
   </div>
 
