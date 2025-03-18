@@ -3,64 +3,171 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BlockEstate Prototype</title>
+  <title>BlockEstate - Student Real Estate Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script> <!-- Include Web3.js -->
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
 </head>
 <body>
-  <!-- Header Section -->
-  <header>
-    <h1>BlockEstate: Student Real Estate Marketplace</h1>
-    <button id="loginBtn">Student Login</button>
-    <button id="connectButton">Connect MetaMask</button>
-  </header>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="/api/placeholder/40/40" alt="BlockEstate Logo" />
+      <h1>BlockEstate</h1>
+    </div>
+    <div class="nav-buttons">
+      <button id="loginBtn" class="btn secondary-btn">Student Login</button>
+      <button id="connectButton" class="btn primary-btn">Connect MetaMask</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Student Real Estate <span class="highlight">Marketplace</span></h1>
+      <p>Blockchain-powered platform connecting student renters with verified properties near campus</p>
+      <div class="hero-buttons">
+        <button id="exploreBtn" class="btn primary-btn">Explore Properties</button>
+        <button id="registerPropertyBtn" class="btn secondary-btn">Register Property</button>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="/api/placeholder/500/400" alt="Real Estate Illustration" />
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <h2>Why Choose BlockEstate?</h2>
+    <div class="feature-cards">
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Secure Transactions</h3>
+        <p>Blockchain-powered smart contracts ensure secure and transparent transactions</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💸</div>
+        <h3>Student Discounts</h3>
+        <p>Special rates for verified students with valid university credentials</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Easy Management</h3>
+        <p>Simplified property management for both students and landlords</p>
+      </div>
+    </div>
+  </section>
 
   <!-- Student Login Section -->
-  <div id="studentLogin" class="hidden">
-    <h2>Student Login</h2>
-    <form id="loginForm">
-      <label for="studentID">
-        <input type="text" id="studentID" placeholder="Enter Student ID" name="studentID" required>
-      </label>
-      <button type="submit">Login</button>
-    </form>
+  <div id="studentLogin" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>Student Login</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="studentID">Student ID</label>
+          <input type="text" id="studentID" placeholder="Enter Student ID" name="studentID" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter Password" name="password" required>
+        </div>
+        <button type="submit" class="btn primary-btn">Login</button>
+      </form>
+    </div>
   </div>
 
   <!-- Property Listing Section -->
-  <div id="propertyList" class="hidden">
+  <div id="propertyList" class="properties-container hidden">
     <h2>Available Properties</h2>
-    <div class="property-card">
-      <h3>Apartment Near Campus</h3>
-      <p>Price: $500/month</p>
-      <p>Discount: 20% for Students</p>
-      <button class="smartContractBtn" onclick="executeSmartContract('apartmentNearCampus')">Sign Smart Contract</button>
-    </div>
-    <div class="property-card">
-      <h3>Studio in Downtown</h3>
-      <p>Price: $800/month</p>
-      <p>Discount: 15% for Students</p>
-      <button class="smartContractBtn" onclick="executeSmartContract('studioInDowntown')">Sign Smart Contract</button>
+    <div class="properties-grid">
+      <div class="property-card">
+        <div class="property-image">
+          <img src="/api/placeholder/320/200" alt="Apartment Near Campus" />
+          <span class="property-badge">Verified</span>
+        </div>
+        <div class="property-details">
+          <h3>Apartment Near Campus</h3>
+          <p class="property-location">0.5 miles from University</p>
+          <div class="property-features">
+            <span>2 Bedrooms</span>
+            <span>1 Bath</span>
+            <span>Furnished</span>
+          </div>
+          <div class="property-price">
+            <p><strong>$500</strong>/month</p>
+            <p class="discount">20% Student Discount</p>
+          </div>
+          <button class="btn primary-btn smartContractBtn" onclick="executeSmartContract('apartmentNearCampus')">Sign Smart Contract</button>
+        </div>
+      </div>
+      
+      <div class="property-card">
+        <div class="property-image">
+          <img src="/api/placeholder/320/200" alt="Studio in Downtown" />
+          <span class="property-badge">Verified</span>
+        </div>
+        <div class="property-details">
+          <h3>Studio in Downtown</h3>
+          <p class="property-location">1.2 miles from University</p>
+          <div class="property-features">
+            <span>Studio</span>
+            <span>1 Bath</span>
+            <span>Utilities Included</span>
+          </div>
+          <div class="property-price">
+            <p><strong>$800</strong>/month</p>
+            <p class="discount">15% Student Discount</p>
+          </div>
+          <button class="btn primary-btn smartContractBtn" onclick="executeSmartContract('studioInDowntown')">Sign Smart Contract</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Confirmation Section for Smart Contract -->
-  <div id="confirmation" class="hidden">
-    <h2>Smart Contract Signed!</h2>
-    <p>You have successfully signed the contract for the selected property.</p>
+  <div id="confirmation" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <div class="confirmation-content">
+        <div class="confirmation-icon">✓</div>
+        <h2>Smart Contract Signed!</h2>
+        <p>You have successfully signed the contract for the selected property.</p>
+        <p class="transaction-id">Transaction ID: <span id="txHash">0x123...abc</span></p>
+        <button class="btn primary-btn" id="closeTxBtn">Close</button>
+      </div>
+    </div>
   </div>
 
   <!-- Property Registration Section -->
-  <div id="propertyRegistration" class="hidden">
-    <h2>Register Your Property</h2>
-    <form id="registerForm">
-      <label for="price">
-        <input type="number" id="price" placeholder="Price in ETH" required />
-      </label>
-      <label for="location">
-        <input type="text" id="location" placeholder="Property Location" required />
-      </label>
-      <button type="submit">Register Property</button>
-    </form>
+  <div id="propertyRegistration" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>Register Your Property</h2>
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="propertyTitle">Property Title</label>
+          <input type="text" id="propertyTitle" placeholder="e.g., Cozy Studio Apartment" required />
+        </div>
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" placeholder="Property Location" required />
+        </div>
+        <div class="form-group">
+          <label for="price">Price (ETH)</label>
+          <input type="number" id="price" placeholder="Price in ETH" step="0.01" required />
+        </div>
+        <div class="form-group">
+          <label for="studentDiscount">Student Discount (%)</label>
+          <input type="number" id="studentDiscount" placeholder="e.g., 10" min="0" max="50" />
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" placeholder="Describe your property"></textarea>
+        </div>
+        <button type="submit" class="btn primary-btn">Register Property</button>
+      </form>
+    </div>
   </div>
 
   <!-- Include External JavaScript File -->
