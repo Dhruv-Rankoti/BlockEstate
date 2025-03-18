@@ -2,16 +2,17 @@
 pragma solidity ^0.8.0;
 
 contract BlockEstate {
-
     // Structure for a Property
     struct Property {
         uint id;
         address owner;
+        string title;       // Added title field
         uint price;
         string location;
         bool isForSale;
         bool isForRent;
-        uint rentAmount;  // Rent amount per month
+        uint studentDiscount; // Added student discount field
+        string description;   // Added description field
         uint shares;      // Number of shares for fractional ownership
         uint sharePrice;  // Price per share
     }
@@ -27,10 +28,10 @@ contract BlockEstate {
     mapping(address => bool) public authorizedUsers;
 
     // Event when a property is registered
-    event PropertyRegistered(uint propertyId, address owner, uint price, string location);
+    event PropertyRegistered(uint propertyId, address owner, string title, uint price, string location);
 
     // Event when a rental agreement is created
-    event RentalAgreementCreated(uint propertyId, address tenant, uint rentAmount);
+    event RentalAgreementCreated(uint propertyId, address tenant, uint price);
 
     // Event when a share is bought for a property
     event ShareBought(uint propertyId, address buyer, uint shareAmount);
@@ -38,12 +39,6 @@ contract BlockEstate {
     // Modifier to check if the sender is the property owner
     modifier onlyOwner(uint propertyId) {
         require(properties[propertyId].owner == msg.sender, "Only the property owner can perform this action");
-        _;
-    }
-
-    // Modifier to check if the sender is authorized to register properties
-    modifier onlyAuthorized() {
-        require(authorizedUsers[msg.sender], "Only authorized users can register properties");
         _;
     }
 
@@ -59,133 +54,115 @@ contract BlockEstate {
         _;
     }
 
-    // Constructor to set initial authorized users (can be expanded with more logic)
+    // Constructor - all users are authorized by default for simplicity in this demo
     constructor() {
         authorizedUsers[msg.sender] = true;  // The deployer is authorized by default
     }
 
-    // Function to authorize a user (restricted to owner)
+    // Function to authorize a user
     function authorizeUser(address user) public {
-        require(msg.sender == address(this), "Only the contract can authorize users");  // Restrict to a specific role or contract admin
+        // For demonstration purposes, anyone can be authorized
+        // In a production environment, this should be restricted
         authorizedUsers[user] = true;
-    }
-
-    // Function to deauthorize a user (restricted to owner)
-    function deauthorizeUser(address user) public {
-        require(msg.sender == address(this), "Only the contract can deauthorize users");  // Restrict to a specific role or contract admin
-        authorizedUsers[user] = false;
     }
 
     // Function to register a property for sale or rent
     function registerProperty(
+        string memory title,
         uint price,
         string memory location,
         bool isForSale,
         bool isForRent,
-        uint rentAmount,
+        uint studentDiscount,
+        string memory description,
         uint shares,
         uint sharePrice
-    ) public onlyAuthorized {
+    ) public {
+        // For demonstration purposes, all users are authorized
+        // In production, use the onlyAuthorized modifier
         propertyCount++;
         properties[propertyCount] = Property({
             id: propertyCount,
             owner: msg.sender,
+            title: title,
             price: price,
             location: location,
             isForSale: isForSale,
             isForRent: isForRent,
-            rentAmount: rentAmount,
+            studentDiscount: studentDiscount,
+            description: description,
             shares: shares,
             sharePrice: sharePrice
         });
 
-        emit PropertyRegistered(propertyCount, msg.sender, price, location);
+        emit PropertyRegistered(propertyCount, msg.sender, title, price, location);
     }
 
-    // Function to create a rental agreement
-    function createRentalAgreement(uint propertyId) public payable forRent(propertyId) {
+    // Function to purchase a property
+    function purchaseProperty(uint propertyId) public payable forSale(propertyId) {
         Property storage property = properties[propertyId];
         
-        // Check if enough rent is paid
-        require(msg.value == property.rentAmount, "Insufficient rent payment");
+        // Check if enough money is paid
+        require(msg.value >= property.price, "Insufficient payment");
 
-        // Transfer rent to property owner with error handling
+        // Transfer payment to property owner with error handling
         (bool success, ) = payable(property.owner).call{value: msg.value}("");
-        require(success, "Rent transfer failed");
+        require(success, "Payment transfer failed");
 
-        // Emit the event
-        emit RentalAgreementCreated(propertyId, msg.sender, property.rentAmount);
-    }
-
-    // Function to purchase shares of a property (for fractional ownership)
-    function buyShares(uint propertyId, uint shareAmount) public payable forSale(propertyId) {
-        Property storage property = properties[propertyId];
-
-        // Calculate the total price for the shares
-        uint totalPrice = shareAmount * property.sharePrice;
+        // Transfer ownership
+        property.owner = msg.sender;
+        property.isForSale = false; // No longer for sale
         
-        // Ensure enough Ether is sent
-        require(msg.value == totalPrice, "Incorrect Ether sent");
-
-        // Ensure the property has enough shares available
-        require(property.shares >= shareAmount, "Not enough shares available");
-
-        // Transfer the Ether to the property owner with error handling
-        (bool success, ) = payable(property.owner).call{value: msg.value}("");
-        require(success, "Share purchase failed");
-
-        // Update shares
-        propertyShares[propertyId][msg.sender] += shareAmount;
-        property.shares -= shareAmount;
-
-        // Emit the event
-        emit ShareBought(propertyId, msg.sender, shareAmount);
+        // Any excess payment should be returned
+        if (msg.value > property.price) {
+            uint excess = msg.value - property.price;
+            (success, ) = payable(msg.sender).call{value: excess}("");
+            require(success, "Refund transfer failed");
+        }
     }
 
-    // Function to check how many shares the caller owns in a property
-    function getPropertyShares(uint propertyId) public view returns (uint) {
-        return propertyShares[propertyId][msg.sender];
-    }
-
-    // Function to check if a property is for sale
-    function isPropertyForSale(uint propertyId) public view returns (bool) {
-        return properties[propertyId].isForSale;
-    }
-
-    // Function to check if a property is for rent
-    function isPropertyForRent(uint propertyId) public view returns (bool) {
-        return properties[propertyId].isForRent;
+    // Function to get all property count
+    function getPropertyCount() public view returns (uint) {
+        return propertyCount;
     }
 
     // Function to get property details
     function getPropertyDetails(uint propertyId) public view returns (
+        uint id,
+        address owner,
+        string memory title,
         uint price,
         string memory location,
         bool isForSale,
         bool isForRent,
-        uint rentAmount,
+        uint studentDiscount,
+        string memory description,
         uint shares,
         uint sharePrice
     ) {
         Property storage property = properties[propertyId];
         return (
+            property.id,
+            property.owner,
+            property.title,
             property.price,
             property.location,
             property.isForSale,
             property.isForRent,
-            property.rentAmount,
+            property.studentDiscount,
+            property.description,
             property.shares,
             property.sharePrice
         );
     }
 
-    // Fallback function to handle unexpected calls or transfers of Ether
+    // Receive function to handle unexpected calls or transfers of Ether
     receive() external payable {
-        revert("Direct Ether transfers not allowed");
+        // Accept Ether transfers for simplicity in this demo
     }
 
     // Fallback function to handle unexpected calls
     fallback() external payable {
-        revert("Fallback function triggered, revert call");
+        // Accept fallback calls for simplicity in this demo
     }
 }
